@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Cobrinha Multiplayer</title>
+  <style>
+    body {
+      background-color: #12091f;
+      color: #e2d9f3;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+    }
+
+    h1, h2, h3 {
+      color: #c792ea;
+      margin-top: 5px;
+    }
+
+    .setup-box {
+      background: #231238;
+      padding: 25px 30px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+      border: 2px solid #5c2b97;
+      box-shadow: 0 4px 15px rgba(92, 43, 151, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    input[type="text"] {
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #7b38c6;
+      background-color: #12091f;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      text-align: center;
+    }
+
+    input[type="text"]:focus {
+      border-color: #bb86fc;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: 2px solid #7b38c6;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+
+    button {
+      padding: 10px 18px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      background-color: #8a2be2;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #a042f8;
+      transform: translateY(-2px);
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+    }
+
+    canvas {
+      background-color: #000000; 
+      border: 3px solid #7b38c6;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(123, 56, 198, 0.4);
+    }
+
+    .ranking {
+      background: #231238;
+      padding: 15px 25px;
+      border-radius: 12px;
+      min-width: 250px;
+      border: 2px solid #5c2b97;
+    }
+
+    .ranking ol { padding-left: 20px; }
+    .ranking li { margin-bottom: 8px; font-weight: 500; }
+
+    .legend {
+      margin-top: 15px;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .modal {
+      position: absolute;
+      top: 150px;
+      background: rgba(18, 9, 31, 0.95);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      border: 2px solid #a042f8;
+      box-shadow: 0 0 25px rgba(160, 66, 248, 0.5);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <h1>Cobrinha Multiplayer</h1>
+
+  <!-- Configuração Inicial -->
+  <div class="setup-box" id="setup">
+    <div class="input-group">
+      <input type="text" id="nickname" placeholder="Seu Nickname" maxlength="10">
+      <input type="color" id="snakeColor" value="#00ff88" title="Escolha a cor da sua cobra">
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="customRoomId" placeholder="Nome/Senha da Sala" maxlength="12">
+    </div>
+
+    <div class="button-group">
+      <button onclick="createRoom()">Criar Sala</button>
+      <button onclick="joinRoom()">Entrar na Sala</button>
+    </div>
+    
+    <p id="status" style="margin: 5px 0 0 0; color: #bb86fc; font-weight: bold;"></p>
+  </div>
+
+  <!-- Tela do Jogo -->
+  <div class="container hidden" id="gameContainer">
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    
+    <div class="ranking">
+      <h3>🏆 Ranking da Sala</h3>
+      <ol id="leaderboard"></ol>
+      <div class="legend">
+        <b>🍎 Frutas & Efeitos:</b><br>
+        ⚪ Cinza: +5 pts<br>
+        🌀 Verde Ácida: +5 pts (Lentidão 5s)<br>
+        🔴 Rosa/Vermelha: +10 pts<br>
+        ⚡ Dourada: +20 pts (Turbo 5s)<br>
+        💎 Azul Neon: +30 pts (Rara)<br>
+        🟣 Roxo Neon: +50 pts + <b>❤️ 1 Vida Extra!</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tela de Game Over -->
+  <div id="gameOverModal" class="modal hidden">
+    <h2 style="color: #ff4444;">Suas vidas acabaram!</h2>
+    <p id="deathInfo"></p>
+    
+    <div id="deathButtons">
+      <button onclick="respawnSame()">Continuar (Mesmo Nick)</button>
+      <br><br>
+      <button onclick="showChangeNickInput()">Trocar Nick / Cor</button>
+    </div>
+
+    <div id="newNickBox" class="hidden">
+      <div class="input-group" style="margin-top: 15px;">
+        <input type="text" id="newNicknameInput" placeholder="Novo Nickname" maxlength="10">
+        <input type="color" id="newSnakeColor" value="#00ff88" title="Nova cor da sua cobra">
+      </div>
+      <br>
+      <button onclick="confirmNewNick()">Confirmar e Jogar</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+  <script>
+    const GRID = 20;
+    const CANVAS_SIZE = 600;
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let peer = null;
+    let conn = null;
+    let isHost = false;
+    let nickname = '';
+    let selectedColor = '#00ff88';
+    let personalRecord = 0;
+
+    let players = {};
+    let foods = [];
+    let connections = [];
+
+    const TOTAL_FOODS = 8;
+    const INITIAL_LIVES = 3;
+
+    function getRandomPos() {
+      return {
+        x: Math.floor(Math.random() * (CANVAS_SIZE / GRID)) * GRID,
+        y: Math.floor(Math.random() * (CANVAS_SIZE / GRID)) * GRID
+      };
+    }
+
+    function getRandomFoodType() {
+      const rand = Math.random();
+      if (rand < 0.06) return { type: 'super', color: '#b026ff', points: 50 }; // 6% Roxo (+50 + 1 Vida)
+      if (rand < 0.18) return { type: 'rare', color: '#00d2ff', points: 30 };  // 12% Azul (+30)
+      if (rand < 0.33) return { type: 'speed', color: '#ffe600', points: 20 }; // 15% Dourado (+20 + Turbo)
+      if (rand < 0.50) return { type: 'normal', color: '#ff2a6d', points: 10 };// 17% Rosa (+10)
+      if (rand < 0.70) return { type: 'slow', color: '#39ff14', points: 5 };   // 20% Verde (+5 + Lento)
+      return { type: 'low', color: '#a0a0a0', points: 5 };                    // 30% Cinza (+5)
+    }
+
+    function initFoods() {
+      foods = [];
+      for (let i = 0; i < TOTAL_FOODS; i++) {
+        const pos = getRandomPos();
+        const foodType = getRandomFoodType();
+        foods.push({ ...pos, ...foodType });
+      }
+    }
+
+    function createRoom() {
+      nickname = document.getElementById('nickname').value.trim() || 'Host';
+      selectedColor = document.getElementById('snakeColor').value;
+      const customRoom = document.getElementById('customRoomId').value.trim();
+
+      if (!customRoom) return alert('Digite um nome ou senha para a Sala!');
+
+      const roomId = 'cobrinha-' + customRoom.toLowerCase().replace(/[^a-z0-9]/g, '');
+      peer = new Peer(roomId);
+
+      peer.on('open', id => {
+        isHost = true;
+        document.getElementById('status').innerText = `Sala Criada! Senha: ${customRoom}`;
+        initFoods();
+        startLocalGame(peer.id);
+      });
+
+      peer.on('error', err => {
+        if (err.type === 'unavailable-id') {
+          alert('Esta senha de sala já está em uso! Escolha outra.');
+        } else {
+          alert('Erro ao criar sala: ' + err.type);
+        }
+      });
+
+      peer.on('connection', c => {
+        connections.push(c);
+        c.on('data', data => handleHostMessages(c, data));
+      });
+    }
+
+    function joinRoom() {
+      nickname = document.getElementById('nickname').value.trim() || 'Jogador';
+      selectedColor = document.getElementById('snakeColor').value;
+      const customRoom = document.getElementById('customRoomId').value.trim();
+
+      if (!customRoom) return alert('Digite a senha da sala para entrar!');
+
+      const hostId = 'cobrinha-' + customRoom.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      peer = new Peer();
+      peer.on('open', id => {
+        conn = peer.connect(hostId);
+        conn.on('open', () => {
+          document.getElementById('setup').classList.add('hidden');
+          document.getElementById('gameContainer').classList.remove('hidden');
+          conn.send({ type: 'JOIN', nickname: nickname, color: selectedColor });
+        });
+
+        conn.on('data', data => handleClientMessages(data));
+      });
+
+      peer.on('error', err => {
+        alert('Não foi possível encontrar essa sala. Verifique a senha!');
+      });
+    }
+
+    function startLocalGame(hostId) {
+      document.getElementById('setup').classList.add('hidden');
+      document.getElementById('gameContainer').classList.remove('hidden');
+      
+      addPlayer(hostId, nickname, selectedColor);
+      setInterval(gameLoop, 220);
+    }
+
+    function addPlayer(id, nick, color) {
+      const spawnPos = getRandomPos();
+      players[id] = {
+        id: id,
+        nickname: nick,
+        body: [spawnPos],
+        dirX: GRID,
+        dirY: 0,
+        score: 0,
+        lives: INITIAL_LIVES,
+        alive: true,
+        color: color || `#00ff88`,
+        speedBoost: false,
+        speedTicks: 0,
+        slowDebuff: false,
+        slowTicks: 0,
+        skipNextMove: false
+      };
+    }
+
+    function handleHostMessages(c, data) {
+      if (data.type === 'JOIN') addPlayer(c.peer, data.nickname, data.color);
+      if (data.type === 'MOVE' && players[c.peer]) {
+        const p = players[c.peer];
+        if (data.dirX !== -p.dirX && data.dirY !== -p.dirY) {
+          p.dirX = data.dirX;
+          p.dirY = data.dirY;
+        }
+      }
+      if (data.type === 'RESPAWN') addPlayer(c.peer, data.nickname, data.color);
+    }
+
+    function handleClientMessages(data) {
+      if (data.type === 'STATE') {
+        renderGame(data.players, data.foods);
+        updateLeaderboard(data.players);
+      }
+      if (data.type === 'DEAD') {
+        showGameOver(data.score);
+      }
+    }
+
+    function resetPlayerPosition(p) {
+      const respawnPos = getRandomPos();
+      p.body = [respawnPos];
+      p.dirX = GRID;
+      p.dirY = 0;
+      p.speedBoost = false;
+      p.slowDebuff = false;
+    }
+
+    function movePlayer(p) {
+      if (!p.alive) return;
+
+      const head = { x: p.body[0].x + p.dirX, y: p.body[0].y + p.dirY };
+
+      // Colisão com parede
+      if (head.x < 0 || head.x >= CANVAS_SIZE || head.y < 0 || head.y >= CANVAS_SIZE) {
+        handleHit(p);
+        return;
+      }
+
+      // Colisão com cobras
+      let hitSelfOrOther = false;
+      Object.values(players).forEach(other => {
+        if (!other.alive) return;
+        other.body.forEach(seg => {
+          if (head.x === seg.x && head.y === seg.y) hitSelfOrOther = true;
+        });
+      });
+
+      if (hitSelfOrOther) {
+        handleHit(p);
+        return;
+      }
+
+      p.body.unshift(head);
+
+      let ateIndex = foods.findIndex(f => f.x === head.x && f.y === head.y);
+      if (ateIndex !== -1) {
+        const foodEaten = foods[ateIndex];
+        p.score += foodEaten.points;
+
+        if (foodEaten.type === 'super') {
+          if (p.lives < 5) p.lives += 1; // Dá vida extra (máximo 5)
+        } else if (foodEaten.type === 'speed') {
+          p.speedBoost = true;
+          p.speedTicks = 25;
+          p.slowDebuff = false;
+        } else if (foodEaten.type === 'slow') {
+          p.slowDebuff = true;
+          p.slowTicks = 25;
+          p.speedBoost = false;
+        }
+
+        foods[ateIndex] = { ...getRandomPos(), ...getRandomFoodType() };
+      } else {
+        p.body.pop();
+      }
+    }
+
+    function handleHit(p) {
+      p.lives -= 1;
+      if (p.lives <= 0) {
+        killPlayer(p);
+      } else {
+        resetPlayerPosition(p);
+      }
+    }
+
+    function gameLoop() {
+      if (!isHost) return;
+
+      Object.values(players).forEach(p => {
+        if (!p.alive) return;
+
+        if (p.slowDebuff) {
+          p.slowTicks--;
+          if (p.slowTicks <= 0) p.slowDebuff = false;
+
+          p.skipNextMove = !p.skipNextMove;
+          if (p.skipNextMove) return; 
+        }
+
+        movePlayer(p);
+
+        if (p.alive && p.speedBoost) {
+          movePlayer(p);
+          p.speedTicks--;
+          if (p.speedTicks <= 0) p.speedBoost = false;
+        }
+      });
+
+      const state = { type: 'STATE', players, foods };
+      connections.forEach(c => c.send(state));
+      renderGame(players, foods);
+      updateLeaderboard(players);
+    }
+
+    function killPlayer(p) {
+      p.alive = false;
+
+      if (p.id === peer.id) {
+        showGameOver(p.score);
+      } else {
+        const c = connections.find(conn => conn.peer === p.id);
+        if (c) c.send({ type: 'DEAD', score: p.score });
+      }
+    }
+
+    function drawRoundedRect(x, y, width, height, radius, color, borderColor = null) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      ctx.fillStyle = color;
+      ctx.fill();
+      if (borderColor) {
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+
+    function renderGame(playersObj, foodsList) {
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+      // Desenhar Frutas
+      foodsList.forEach(food => {
+        const border = (food.type === 'super' || food.type === 'speed' || food.type === 'slow') ? '#ffffff' : null;
+        drawRoundedRect(food.x + 1, food.y + 1, GRID - 3, GRID - 3, 6, food.color, border);
+      });
+
+      // Desenhar Cobras
+      Object.values(playersObj).forEach(p => {
+        if (!p.alive) return;
+        p.body.forEach((seg, i) => {
+          if (i === 0) {
+            if (p.speedBoost) {
+              drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 6, '#ffe600');
+            } else if (p.slowDebuff) {
+              drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 6, '#39ff14');
+            } else {
+              drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 6, '#ffffff');
+              drawRoundedRect(seg.x + 4, seg.y + 4, GRID - 9, GRID - 9, 4, p.color);
+            }
+          } else {
+            drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 5, p.color);
+          }
+        });
+      });
+    }
+
+    function updateLeaderboard(playersObj) {
+      const list = document.getElementById('leaderboard');
+      list.innerHTML = '';
+      
+      const sorted = Object.values(playersObj).sort((a, b) => b.score - a.score);
+
+      sorted.forEach(p => {
+        const li = document.createElement('li');
+        let statusIcons = '';
+        if (p.speedBoost) statusIcons += ' ⚡';
+        if (p.slowDebuff) statusIcons += ' 🐌';
+
+        const hearts = '❤️'.repeat(Math.max(0, p.lives));
+
+        li.style.color = p.color;
+        li.innerText = `${p.nickname}: ${p.score} pts [${hearts}]${statusIcons}`;
+        list.appendChild(li);
+      });
+    }
+
+    document.addEventListener('keydown', e => {
+      let dirX = 0, dirY = 0;
+      if (e.key === 'ArrowUp' || e.key === 'w') { dirX = 0; dirY = -GRID; }
+      if (e.key === 'ArrowDown' || e.key === 's') { dirX = 0; dirY = GRID; }
+      if (e.key === 'ArrowLeft' || e.key === 'a') { dirX = -GRID; dirY = 0; }
+      if (e.key === 'ArrowRight' || e.key === 'd') { dirX = GRID; dirY = 0; }
+
+      if (dirX !== 0 || dirY !== 0) {
+        if (isHost && players[peer.id]) {
+          const p = players[peer.id];
+          if (dirX !== -p.dirX && dirY !== -p.dirY) {
+            p.dirX = dirX; p.dirY = dirY;
+          }
+        } else if (conn) {
+          conn.send({ type: 'MOVE', dirX, dirY });
+        }
+      }
+    });
+
+    function showGameOver(score) {
+      if (score > personalRecord) personalRecord = score;
+      document.getElementById('deathInfo').innerText = `Pontuação Final: ${score} | Seu Recorde: ${personalRecord}`;
+      
+      document.getElementById('deathButtons').classList.remove('hidden');
+      document.getElementById('newNickBox').classList.add('hidden');
+      document.getElementById('gameOverModal').classList.remove('hidden');
+    }
+
+    function respawnSame() {
+      document.getElementById('gameOverModal').classList.add('hidden');
+      if (isHost) addPlayer(peer.id, nickname, selectedColor);
+      else conn.send({ type: 'RESPAWN', nickname: nickname, color: selectedColor });
+    }
+
+    function showChangeNickInput() {
+      document.getElementById('deathButtons').classList.add('hidden');
+      document.getElementById('newNickBox').classList.remove('hidden');
+    }
+
+    function confirmNewNick() {
+      const input = document.getElementById('newNicknameInput').value.trim();
+      if (input) nickname = input;
+      selectedColor = document.getElementById('newSnakeColor').value;
+      
+      document.getElementById('gameOverModal').classList.add('hidden');
+      if (isHost) addPlayer(peer.id, nickname, selectedColor);
+      else conn.send({ type: 'RESPAWN', nickname: nickname, color: selectedColor });
+    }
+  </script>
+</body>
+</html>
