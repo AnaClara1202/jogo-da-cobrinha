@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;min-height:100%;background:radial-gradient(circle at center,#1b0c33 0%,#0d0519 100%);background-attachment:fixed;color:#e2d9f3;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;overflow:auto}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;overflow:auto}
 .setup-box{background:rgba(35,18,56,.85);backdrop-filter:blur(10px);padding:30px 35px;border-radius:16px;width:100%;max-width:440px;border:1px solid rgba(160,66,248,.4);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(138,43,226,.2);display:flex;flex-direction:column;gap:16px}
 .setup-box h1{color:#c792ea;font-size:2rem;letter-spacing:2px;text-shadow:0 0 15px rgba(199,146,234,.5);text-align:center}
 .form-group{display:flex;flex-direction:column;gap:6px}
@@ -29,23 +29,23 @@ button{width:100%;padding:12px 16px;border-radius:8px;border:none;font-size:14px
 button:hover{background:linear-gradient(135deg,#a042f8,#8a2be2);transform:translateY(-2px);box-shadow:0 6px 16px rgba(160,66,248,.5)}
 .btn-secondary{background:linear-gradient(135deg,#391c5c,#231238);border:1px solid #7b38c6}
 .btn-secondary:hover{background:linear-gradient(135deg,#5c2b97,#391c5c)}
-.game-layout{display:flex;flex-direction:column;align-items:center;width:100%;height:calc(100vh - 24px);height:calc(100dvh - 24px);gap:10px}
-.arena-header{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;max-width:880px;background:rgba(35,18,56,.85);border:2px solid #5c2b97;border-radius:10px;padding:8px 16px;box-shadow:0 0 15px rgba(123,56,198,.3)}
+.game-layout{display:flex;flex-direction:column;align-items:center;width:100%;height:calc(100vh - 12px);height:calc(100dvh - 12px);gap:6px}
+.arena-header{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;max-width:880px;background:rgba(35,18,56,.85);border:2px solid #5c2b97;border-radius:10px;padding:4px 14px;box-shadow:0 0 15px rgba(123,56,198,.3)}
 .room-badge{display:flex;align-items:center;gap:8px;font-size:14px;color:#bb86fc;font-weight:600}
 .room-code-tag{background:#12091f;border:1px solid #a042f8;color:#00ff88;padding:4px 10px;border-radius:6px;font-family:monospace;font-size:15px;letter-spacing:1px}
-.copy-btn{width:auto;padding:4px 10px;font-size:12px;background:#5c2b97}
+.copy-btn{width:auto;padding:3px 10px;font-size:12px;background:#5c2b97}
 .copy-btn:hover{background:#8a2be2}
-.main-container{display:flex;gap:15px;width:100%;flex:1;min-height:0;justify-content:center;align-items:center}
+.main-container{display:flex;gap:10px;width:100%;flex:1;min-height:0;justify-content:center;align-items:center}
 .canvas-wrapper{height:100%;display:flex;align-items:center;justify-content:center;position:relative}
 canvas{background:#000;border:3px solid #7b38c6;border-radius:12px;box-shadow:0 0 25px rgba(123,56,198,.4);max-height:100%;max-width:100%;aspect-ratio:1/1;touch-action:none}
 .killfeed{position:absolute;top:15px;left:15px;display:flex;flex-direction:column;gap:6px;pointer-events:none;z-index:5}
 .killfeed-item{background:rgba(18,9,31,.85);border-left:3px solid #bb86fc;padding:5px 10px;border-radius:4px;font-size:12px;color:#fff;animation:fadeInOut 4s forwards;box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.controls-guide{position:absolute;top:15px;right:15px;background:rgba(23,11,41,.82);border:1px solid rgba(160,66,248,.4);border-radius:8px;padding:8px 12px;font-size:11px;color:#d1c4e9;pointer-events:none;z-index:5;backdrop-filter:blur(4px)}
+.controls-guide{margin-top:10px;font-size:11px;color:#d1c4e9;border-top:1px solid #5c2b97;padding-top:8px;line-height:1.9}
 .controls-guide h4{font-size:11px;color:#bb86fc;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
 .key-badge{background:#391c5c;border:1px solid #7b38c6;color:#fff;padding:1px 5px;border-radius:4px;font-weight:bold;font-family:monospace}
 @keyframes fadeInOut{0%{opacity:0;transform:translateX(-10px)}10%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-5px)}}
 @media (prefers-reduced-motion:reduce){.killfeed-item{animation:none}}
-.ranking{background:#231238;padding:15px 20px;border-radius:12px;width:260px;height:100%;border:2px solid #5c2b97;display:flex;flex-direction:column;overflow-y:auto}
+.ranking{background:#231238;padding:12px 16px;border-radius:12px;width:230px;height:100%;border:2px solid #5c2b97;display:flex;flex-direction:column;overflow-y:auto}
 .ranking ol{padding-left:20px;flex-grow:1}
 .ranking li{margin-bottom:6px;font-weight:500;font-size:14px}
 .legend{margin-top:10px;font-size:12px;line-height:1.5;border-top:1px solid #5c2b97;padding-top:8px}
@@ -53,7 +53,7 @@ canvas{background:#000;border:3px solid #7b38c6;border-radius:12px;box-shadow:0 
 .dpad{display:none;position:absolute;right:8px;bottom:8px;grid-template:repeat(3,44px)/repeat(3,44px);gap:4px;z-index:6;opacity:.75}
 .dpad button{width:44px;height:44px;padding:0;font-size:18px}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#391c5c;border:1px solid #a042f8;padding:8px 16px;border-radius:8px;font-size:13px;z-index:20;transition:opacity .3s}
-@media (pointer:coarse){.dpad{display:grid}}
+@media (pointer:coarse){.dpad{display:grid}.controls-guide{display:none}}
 @media (max-width:760px){
   .main-container{flex-direction:column;gap:8px}
   .canvas-wrapper{flex:1;min-height:0;width:100%}
@@ -97,11 +97,6 @@ canvas{background:#000;border:3px solid #7b38c6;border-radius:12px;box-shadow:0 
   <div class="main-container">
     <div class="canvas-wrapper">
       <div class="killfeed" id="killfeed"></div>
-      <div class="controls-guide">
-        <h4>🎮 Controles</h4>
-        <div>Movimento: <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span></div>
-        <div style="margin-top:3px">Ou use: <span class="key-badge">▲</span> <span class="key-badge">◄</span> <span class="key-badge">▼</span> <span class="key-badge">►</span></div>
-      </div>
       <canvas id="gameCanvas" width="600" height="600"></canvas>
       <div class="dpad" id="dpad">
         <span></span><button data-d="U" aria-label="Cima">▲</button><span></span>
@@ -120,6 +115,11 @@ canvas{background:#000;border:3px solid #7b38c6;border-radius:12px;box-shadow:0 
         ⚡ Dourada: +20 pts (Turbo)<br>
         💎 Azul Neon: +30 pts (Rara)<br>
         🟣 Roxo Neon: +50 pts + <b>❤️ 1 Vida (Máx 6)!</b>
+      </div>
+      <div class="controls-guide">
+        <h4>🎮 Controles</h4>
+        <div>Mover: <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span></div>
+        <div>Ou: <span class="key-badge">▲</span> <span class="key-badge">◄</span> <span class="key-badge">▼</span> <span class="key-badge">►</span></div>
       </div>
     </div>
   </div>
@@ -149,9 +149,13 @@ canvas{background:#000;border:3px solid #7b38c6;border-radius:12px;box-shadow:0 
 
 <div id="toast" class="hidden" role="status"></div>
 
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>window.Peer||document.write('<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"><\/script>')</script>
+<script>window.Peer||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js"><\/script>')</script>
 <script>
 const $ = id => document.getElementById(id);
+window.addEventListener('error', e => { const s = $('status'); if (s) { s.innerText = 'Erro: ' + e.message; s.style.color = '#ff4444'; } });
+const peerMissing = () => { if (typeof Peer === 'undefined') { setStatus('A biblioteca PeerJS não carregou (rede bloqueando?). Tente outra rede.', '#ff4444'); return true; } return false; };
 const GRID = 20, CANVAS_SIZE = 600, CELLS = CANVAS_SIZE / GRID;
 const TOTAL_FOODS = 8, INITIAL_LIVES = 3, MAX_LIVES = 6, TICK_INTERVAL = 120;
 const INVULN_TICKS = 12, MAX_PLAYERS = 12, DEFAULT_COLOR = '#00ff88';
@@ -190,8 +194,8 @@ function addKillfeed(msg) {
 }
 async function copyRoomCode() {
   if (!currentRoomCode) return;
-  try { await navigator.clipboard.writeText(currentRoomCode); showToast(Código ${currentRoomCode} copiado!); }
-  catch (e) { showToast(Código da sala: ${currentRoomCode}); }
+  try { await navigator.clipboard.writeText(currentRoomCode); showToast(`Código ${currentRoomCode} copiado!`); }
+  catch (e) { showToast(`Código da sala: ${currentRoomCode}`); }
 }
 const cleanNick = (s, fb) => ((typeof s === 'string' ? s : '').replace(/[\u0000-\u001f]/g, '').trim().slice(0, 10)) || fb;
 const cleanColor = c => (typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c)) ? c : DEFAULT_COLOR;
@@ -234,7 +238,7 @@ function freeFoodPos() {
   for (let i = 0; i < 300; i++) { const c = randCell(); if (!occ.has(key(c.x, c.y))) return c; }
   return randCell();
 }
-// Procura uma linha livre de len células, longe das bordas, com espaço à frente.
+// Procura uma linha livre de `len` células, longe das bordas, com espaço à frente.
 function placeSnake(len) {
   const occ = occupiedSet();
   for (; len >= 1; len = len > 1 ? Math.ceil(len / 2) : 0) {
@@ -278,6 +282,7 @@ function readProfile(fallback) {
 }
 
 function createRoom(tries = 0) {
+  if (peerMissing()) return;
   readProfile('Host');
   const typed = cleanCode($('customRoomId').value);
   if ($('customRoomId').value.trim() && !typed) { setStatus('Use apenas letras e números no código.', '#ff4444'); return; }
@@ -309,6 +314,7 @@ function createRoom(tries = 0) {
 }
 
 function joinRoom() {
+  if (peerMissing()) return;
   readProfile('Jogador');
   const code = cleanCode($('customRoomId').value);
   if (!code) { setStatus('Digite o Código da Sala para entrar!', '#ff4444'); return; }
@@ -347,7 +353,7 @@ function removeDisconnectedPlayer(peerId, c) {
   const p = players[peerId];
   if (p) {
     delete players[peerId];
-    const msg = 🔌 ${p.nickname} desconectou-se.;
+    const msg = `🔌 ${p.nickname} desconectou-se.`;
     addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
   }
 }
@@ -356,7 +362,7 @@ function startLocalGame(hostId) {
   $('setup').classList.add('hidden');
   $('gameContainer').classList.remove('hidden');
   spawnPlayer(hostId, nickname, selectedColor);
-  addKillfeed(🎮 Sala pronta! Bem-vindo ${nickname}.);
+  addKillfeed(`🎮 Sala pronta! Bem-vindo ${nickname}.`);
   tickStart = performance.now();
   startTicker();
   requestAnimationFrame(renderLoop);
@@ -365,8 +371,8 @@ function startLocalGame(hostId) {
 // Timer em Worker: não é pausado/reduzido quando a aba do host fica em segundo plano.
 function startTicker() {
   try {
-    const url = URL.createObjectURL(new Blob([setInterval(()=>postMessage(0),${TICK_INTERVAL})], { type: 'text/javascript' }));
-    new Worker(url).onmessage = tick;
+    const url = URL.createObjectURL(new Blob([`setInterval(()=>postMessage(0),${TICK_INTERVAL})`], { type: 'text/javascript' }));
+    const w = new Worker(url); w.onmessage = tick; w.onerror = () => setInterval(tick, TICK_INTERVAL);
   } catch (e) { setInterval(tick, TICK_INTERVAL); }
 }
 
@@ -382,7 +388,7 @@ function spawnPlayer(id, nick, color) {
     speedBoost: false, speedTicks: 0, slowDebuff: false, slowTicks: 0, skipNextMove: false,
     invuln: INVULN_TICKS
   };
-  const msg = 🐍 ${nick} entrou no jogo!;
+  const msg = `🐍 ${nick} entrou no jogo!`;
   addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
 }
 
@@ -423,11 +429,11 @@ function eat(p, head, idx) {
   p.score += f.points;
   spawnParticles(f.x, f.y, f.color);
   broadcastEvent({ type: 'PARTICLES', x: f.x, y: f.y, color: f.color });
-  let txt = +${f.points};
+  let txt = `+${f.points}`;
   if (f.type === 'super') {
     if (p.lives < MAX_LIVES) p.lives++;
     txt = '+50 ❤️ +1 VIDA!';
-    const m = 💎 ${p.nickname} pegou uma Fruta Roxa (+1 Vida)!;
+    const m = `💎 ${p.nickname} pegou uma Fruta Roxa (+1 Vida)!`;
     addKillfeed(m); broadcastEvent({ type: 'EVENT_FEED', text: m });
   } else if (f.type === 'speed') { p.speedBoost = true; p.speedTicks = 25; p.slowDebuff = false; txt = '⚡ TURBO!'; }
   else if (f.type === 'slow') { p.slowDebuff = true; p.slowTicks = 25; p.speedBoost = false; txt = '🐌 LENTO!'; }
@@ -437,7 +443,7 @@ function eat(p, head, idx) {
   foods.push({ ...freeFoodPos(), ...getRandomFoodType() });
 }
 
-// Move todos os movers de forma simultânea: ninguém ganha vantagem pela ordem.
+// Move todos os `movers` de forma simultânea: ninguém ganha vantagem pela ordem.
 function step(movers) {
   if (!movers.length) return new Set();
   const occ = new Map();
@@ -455,7 +461,7 @@ function step(movers) {
     const wall = head.x < 0 || head.x >= CANVAS_SIZE || head.y < 0 || head.y >= CANVAS_SIZE;
     let reason = null;
     if (wall) reason = 'colidiu com a parede!';
-    else if (occ.has(k)) { const o = occ.get(k); reason = o === p ? 'bateu em si mesmo!' : bateu em ${o.nickname}!; }
+    else if (occ.has(k)) { const o = occ.get(k); reason = o === p ? 'bateu em si mesmo!' : `bateu em ${o.nickname}!`; }
     else if (headCount[k] > 1) reason = 'colidiu de frente!';
 
     if (!reason) moving.push(m);
@@ -475,7 +481,7 @@ function step(movers) {
 
 function handleHit(p, reason) {
   p.lives--;
-  const msg = 💥 ${p.nickname} ${reason} [Vidas: ${Math.max(0, p.lives)}];
+  const msg = `💥 ${p.nickname} ${reason} [Vidas: ${Math.max(0, p.lives)}]`;
   addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
   if (p.lives <= 0) { killPlayer(p); return; }
   const len = p.body.length;
@@ -487,7 +493,7 @@ function handleHit(p, reason) {
 }
 
 function killPlayer(p) {
-  const msg = 💀 ${p.nickname} foi eliminado!;
+  const msg = `💀 ${p.nickname} foi eliminado!`;
   addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
   delete players[p.id];                          // morto sai do estado e do ranking
   if (peer && p.id === peer.id) showGameOver(p.score);
@@ -674,7 +680,7 @@ function updateLeaderboard(playersObj) {
     if (p.speedBoost) icons += ' ⚡';
     if (p.slowDebuff) icons += ' 🐌';
     li.style.color = p.color;
-    li.innerText = ${p.nickname}: ${p.score} pts [${'❤️'.repeat(Math.max(0, p.lives))}]${icons};
+    li.innerText = `${p.nickname}: ${p.score} pts [${'❤️'.repeat(Math.max(0, p.lives))}]${icons}`;
     list.appendChild(li);
   });
 }
@@ -713,7 +719,7 @@ document.querySelectorAll('#dpad button').forEach(b =>
 /* ---------- game over / respawn ---------- */
 function showGameOver(score) {
   if (score > personalRecord) personalRecord = score;
-  $('deathInfo').innerText = Pontuação Final: ${score} | Seu Recorde: ${personalRecord};
+  $('deathInfo').innerText = `Pontuação Final: ${score} | Seu Recorde: ${personalRecord}`;
   $('deathButtons').classList.remove('hidden');
   $('newNickBox').classList.add('hidden');
   $('gameOverModal').classList.remove('hidden');
