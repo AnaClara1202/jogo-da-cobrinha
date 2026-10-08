@@ -1,580 +1,740 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Jogo da Cobrinha Multiplayer</title>
-  <style>
-    body {
-      background-color: #12091f;
-      color: #e2d9f3;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 20px;
-    }
-
-    h1, h2, h3 {
-      color: #c792ea;
-      margin-top: 5px;
-    }
-
-    .setup-box {
-      background: #231238;
-      padding: 25px 30px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      text-align: center;
-      border: 2px solid #5c2b97;
-      box-shadow: 0 4px 15px rgba(92, 43, 151, 0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .input-group {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-    }
-
-    .button-group {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-      margin-top: 5px;
-    }
-
-    input[type="text"] {
-      padding: 10px 12px;
-      border-radius: 6px;
-      border: 1px solid #7b38c6;
-      background-color: #12091f;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-      text-align: center;
-    }
-
-    input[type="text"]:focus {
-      border-color: #bb86fc;
-    }
-
-    input[type="color"] {
-      -webkit-appearance: none;
-      border: 2px solid #7b38c6;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      background: none;
-      padding: 0;
-    }
-
-    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-    input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
-
-    button {
-      padding: 10px 18px;
-      border-radius: 6px;
-      border: none;
-      font-size: 14px;
-      background-color: #8a2be2;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background-color: #a042f8;
-      transform: translateY(-2px);
-    }
-
-    .container {
-      display: flex;
-      gap: 20px;
-    }
-
-    canvas {
-      background-color: #000000; 
-      border: 3px solid #7b38c6;
-      border-radius: 12px;
-      box-shadow: 0 0 25px rgba(123, 56, 198, 0.4);
-    }
-
-    .ranking {
-      background: #231238;
-      padding: 15px 25px;
-      border-radius: 12px;
-      min-width: 250px;
-      border: 2px solid #5c2b97;
-    }
-
-    .ranking ol { padding-left: 20px; }
-    .ranking li { margin-bottom: 8px; font-weight: 500; }
-
-    .legend {
-      margin-top: 15px;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .modal {
-      position: absolute;
-      top: 150px;
-      background: rgba(18, 9, 31, 0.95);
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      border: 2px solid #a042f8;
-      box-shadow: 0 0 25px rgba(160, 66, 248, 0.5);
-    }
-
-    .hidden { display: none !important; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake Arena Multiplayer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100%;background:radial-gradient(circle at center,#1b0c33 0%,#0d0519 100%);background-attachment:fixed;color:#e2d9f3;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;overflow:auto}
+.setup-box{background:rgba(35,18,56,.85);backdrop-filter:blur(10px);padding:30px 35px;border-radius:16px;width:100%;max-width:440px;border:1px solid rgba(160,66,248,.4);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(138,43,226,.2);display:flex;flex-direction:column;gap:16px}
+.setup-box h1{color:#c792ea;font-size:2rem;letter-spacing:2px;text-shadow:0 0 15px rgba(199,146,234,.5);text-align:center}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#bb86fc}
+.input-row{display:flex;align-items:center;gap:10px;width:100%}
+input[type=text]{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #5c2b97;background:#12091f;color:#fff;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s}
+input[type=text]::placeholder{color:#a99bbd}
+input[type=text]:focus{border-color:#bb86fc;box-shadow:0 0 8px rgba(187,134,252,.4)}
+input[type=color]{-webkit-appearance:none;appearance:none;border:2px solid #a042f8;width:45px;height:45px;flex:none;border-radius:10px;cursor:pointer;background:none;padding:0;transition:transform .2s}
+input[type=color]:hover{transform:scale(1.05)}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+input[type=color]::-webkit-color-swatch{border:none;border-radius:8px}
+input[type=color]::-moz-color-swatch{border:none;border-radius:8px}
+:focus-visible{outline:2px solid #bb86fc;outline-offset:2px}
+.divider{display:flex;align-items:center;color:#7b38c6;font-size:12px;font-weight:bold;margin:4px 0}
+.divider::before,.divider::after{content:'';flex:1;border-bottom:1px solid #391c5c}
+.divider span{padding:0 10px}
+button{width:100%;padding:12px 16px;border-radius:8px;border:none;font-size:14px;font-weight:bold;background:linear-gradient(135deg,#8a2be2,#6a0dad);color:#fff;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 12px rgba(138,43,226,.3)}
+button:hover{background:linear-gradient(135deg,#a042f8,#8a2be2);transform:translateY(-2px);box-shadow:0 6px 16px rgba(160,66,248,.5)}
+.btn-secondary{background:linear-gradient(135deg,#391c5c,#231238);border:1px solid #7b38c6}
+.btn-secondary:hover{background:linear-gradient(135deg,#5c2b97,#391c5c)}
+.game-layout{display:flex;flex-direction:column;align-items:center;width:100%;height:calc(100vh - 24px);height:calc(100dvh - 24px);gap:10px}
+.arena-header{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;max-width:880px;background:rgba(35,18,56,.85);border:2px solid #5c2b97;border-radius:10px;padding:8px 16px;box-shadow:0 0 15px rgba(123,56,198,.3)}
+.room-badge{display:flex;align-items:center;gap:8px;font-size:14px;color:#bb86fc;font-weight:600}
+.room-code-tag{background:#12091f;border:1px solid #a042f8;color:#00ff88;padding:4px 10px;border-radius:6px;font-family:monospace;font-size:15px;letter-spacing:1px}
+.copy-btn{width:auto;padding:4px 10px;font-size:12px;background:#5c2b97}
+.copy-btn:hover{background:#8a2be2}
+.main-container{display:flex;gap:15px;width:100%;flex:1;min-height:0;justify-content:center;align-items:center}
+.canvas-wrapper{height:100%;display:flex;align-items:center;justify-content:center;position:relative}
+canvas{background:#000;border:3px solid #7b38c6;border-radius:12px;box-shadow:0 0 25px rgba(123,56,198,.4);max-height:100%;max-width:100%;aspect-ratio:1/1;touch-action:none}
+.killfeed{position:absolute;top:15px;left:15px;display:flex;flex-direction:column;gap:6px;pointer-events:none;z-index:5}
+.killfeed-item{background:rgba(18,9,31,.85);border-left:3px solid #bb86fc;padding:5px 10px;border-radius:4px;font-size:12px;color:#fff;animation:fadeInOut 4s forwards;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.controls-guide{position:absolute;top:15px;right:15px;background:rgba(23,11,41,.82);border:1px solid rgba(160,66,248,.4);border-radius:8px;padding:8px 12px;font-size:11px;color:#d1c4e9;pointer-events:none;z-index:5;backdrop-filter:blur(4px)}
+.controls-guide h4{font-size:11px;color:#bb86fc;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.key-badge{background:#391c5c;border:1px solid #7b38c6;color:#fff;padding:1px 5px;border-radius:4px;font-weight:bold;font-family:monospace}
+@keyframes fadeInOut{0%{opacity:0;transform:translateX(-10px)}10%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.killfeed-item{animation:none}}
+.ranking{background:#231238;padding:15px 20px;border-radius:12px;width:260px;height:100%;border:2px solid #5c2b97;display:flex;flex-direction:column;overflow-y:auto}
+.ranking ol{padding-left:20px;flex-grow:1}
+.ranking li{margin-bottom:6px;font-weight:500;font-size:14px}
+.legend{margin-top:10px;font-size:12px;line-height:1.5;border-top:1px solid #5c2b97;padding-top:8px}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(92vw,380px);background:rgba(18,9,31,.98);padding:30px;border-radius:12px;text-align:center;border:2px solid #a042f8;box-shadow:0 0 30px rgba(160,66,248,.6);z-index:10}
+.dpad{display:none;position:absolute;right:8px;bottom:8px;grid-template:repeat(3,44px)/repeat(3,44px);gap:4px;z-index:6;opacity:.75}
+.dpad button{width:44px;height:44px;padding:0;font-size:18px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#391c5c;border:1px solid #a042f8;padding:8px 16px;border-radius:8px;font-size:13px;z-index:20;transition:opacity .3s}
+@media (pointer:coarse){.dpad{display:grid}}
+@media (max-width:760px){
+  .main-container{flex-direction:column;gap:8px}
+  .canvas-wrapper{flex:1;min-height:0;width:100%}
+  .ranking{width:100%;height:auto;max-height:26%;flex:none;padding:8px 14px}
+  .legend,.controls-guide{display:none}
+  .room-badge span:first-child{display:none}
+}
+.hidden{display:none!important}
+</style>
 </head>
 <body>
 
-<h1>🐍 Snake Arena</h1>
-
-  <!-- Configuração Inicial -->
-  <div class="setup-box" id="setup">
-    <div class="input-group">
-      <input type="text" id="nickname" placeholder="Seu Nickname" maxlength="10">
-      <input type="color" id="snakeColor" value="#00ff88" title="Escolha a cor da sua cobra">
+<div class="setup-box" id="setup">
+  <h1>🐍 Snake Arena</h1>
+  <div class="form-group">
+    <label for="nickname">Seu Nickname & Cor</label>
+    <div class="input-row">
+      <input type="text" id="nickname" placeholder="Ex: Player1" maxlength="10" autocomplete="off">
+      <input type="color" id="snakeColor" value="#00ff88" title="Escolha a cor da sua cobra" aria-label="Cor da cobra">
     </div>
-
-    <div class="input-group">
-      <input type="text" id="customRoomId" placeholder="Nome/Senha da Sala" maxlength="12">
-    </div>
-
-    <div class="button-group">
-      <button onclick="createRoom()">Criar Sala</button>
-      <button onclick="joinRoom()">Entrar na Sala</button>
-    </div>
-    
-    <p id="status" style="margin: 5px 0 0 0; color: #bb86fc; font-weight: bold;"></p>
   </div>
+  <button onclick="createRoom()">➕ Criar Nova Sala</button>
+  <div class="divider"><span>OU ENTRAR EM UMA SALA</span></div>
+  <div class="form-group">
+    <label for="customRoomId">Código da Sala</label>
+    <div class="input-row"><input type="text" id="customRoomId" placeholder="Digite o Código da Sala" maxlength="15" autocomplete="off"></div>
+  </div>
+  <button class="btn-secondary" onclick="joinRoom()">🚀 Entrar na Sala</button>
+  <p id="status" role="status" style="color:#bb86fc;font-weight:bold;font-size:13px;text-align:center;min-height:18px"></p>
+</div>
 
-  <!-- Tela do Jogo -->
-  <div class="container hidden" id="gameContainer">
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
-    
+<div class="game-layout hidden" id="gameContainer">
+  <div class="arena-header">
+    <div style="font-weight:bold;color:#c792ea;font-size:1.1rem">🐍 Snake Arena</div>
+    <div class="room-badge">
+      <span>CÓDIGO DA SALA:</span>
+      <span class="room-code-tag" id="displayRoomCode">----</span>
+      <button class="copy-btn" onclick="copyRoomCode()">Copiar</button>
+    </div>
+  </div>
+  <div class="main-container">
+    <div class="canvas-wrapper">
+      <div class="killfeed" id="killfeed"></div>
+      <div class="controls-guide">
+        <h4>🎮 Controles</h4>
+        <div>Movimento: <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span></div>
+        <div style="margin-top:3px">Ou use: <span class="key-badge">▲</span> <span class="key-badge">◄</span> <span class="key-badge">▼</span> <span class="key-badge">►</span></div>
+      </div>
+      <canvas id="gameCanvas" width="600" height="600"></canvas>
+      <div class="dpad" id="dpad">
+        <span></span><button data-d="U" aria-label="Cima">▲</button><span></span>
+        <button data-d="L" aria-label="Esquerda">◄</button><span></span><button data-d="R" aria-label="Direita">►</button>
+        <span></span><button data-d="D" aria-label="Baixo">▼</button><span></span>
+      </div>
+    </div>
     <div class="ranking">
-      <h3>🏆 Ranking da Sala</h3>
+      <h3>🏆 Ranking</h3>
       <ol id="leaderboard"></ol>
       <div class="legend">
         <b>🍎 Frutas & Efeitos:</b><br>
         ⚪ Cinza: +5 pts<br>
-        🌀 Verde Ácida: +5 pts (Lentidão 5s)<br>
-        🔴 Rosa/Vermelha: +10 pts<br>
-        ⚡ Dourada: +20 pts (Turbo 5s)<br>
+        🌀 Verde: +5 pts (Lentidão)<br>
+        🔴 Rosa: +10 pts<br>
+        ⚡ Dourada: +20 pts (Turbo)<br>
         💎 Azul Neon: +30 pts (Rara)<br>
-        🟣 Roxo Neon: +50 pts + <b>❤️ 1 Vida Extra!</b>
+        🟣 Roxo Neon: +50 pts + <b>❤️ 1 Vida (Máx 6)!</b>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Tela de Game Over -->
-  <div id="gameOverModal" class="modal hidden">
-    <h2 style="color: #ff4444;">Suas vidas acabaram!</h2>
-    <p id="deathInfo"></p>
-    
-    <div id="deathButtons">
-      <button onclick="respawnSame()">Continuar (Mesmo Nick)</button>
-      <br><br>
-      <button onclick="showChangeNickInput()">Trocar Nick / Cor</button>
-    </div>
-
-    <div id="newNickBox" class="hidden">
-      <div class="input-group" style="margin-top: 15px;">
-        <input type="text" id="newNicknameInput" placeholder="Novo Nickname" maxlength="10">
-        <input type="color" id="newSnakeColor" value="#00ff88" title="Nova cor da sua cobra">
-      </div>
-      <br>
-      <button onclick="confirmNewNick()">Confirmar e Jogar</button>
-    </div>
+<div id="gameOverModal" class="modal hidden" role="dialog" aria-modal="true">
+  <h2 style="color:#ff4444">Suas vidas acabaram!</h2>
+  <p id="deathInfo" style="margin:10px 0"></p>
+  <div id="deathButtons">
+    <button onclick="respawnSame()">Continuar (Mesmo Nick)</button><br><br>
+    <button onclick="showChangeNickInput()">Trocar Nick / Cor</button>
   </div>
+  <div id="newNickBox" class="hidden">
+    <div class="input-row" style="margin-top:15px">
+      <input type="text" id="newNicknameInput" placeholder="Novo Nickname" maxlength="10" autocomplete="off">
+      <input type="color" id="newSnakeColor" value="#00ff88" title="Nova cor" aria-label="Nova cor da cobra">
+    </div><br>
+    <button onclick="confirmNewNick()">Confirmar e Jogar</button>
+  </div>
+</div>
 
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<div id="disconnModal" class="modal hidden" role="alertdialog" aria-modal="true">
+  <h2 style="color:#ff4444">Conexão encerrada</h2>
+  <p id="disconnMsg" style="margin:10px 0 20px"></p>
+  <button onclick="location.reload()">Voltar ao menu</button>
+</div>
 
-  <script>
-    const GRID = 20;
-    const CANVAS_SIZE = 600;
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+<div id="toast" class="hidden" role="status"></div>
 
-    let peer = null;
-    let conn = null;
-    let isHost = false;
-    let nickname = '';
-    let selectedColor = '#00ff88';
-    let personalRecord = 0;
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const GRID = 20, CANVAS_SIZE = 600, CELLS = CANVAS_SIZE / GRID;
+const TOTAL_FOODS = 8, INITIAL_LIVES = 3, MAX_LIVES = 6, TICK_INTERVAL = 120;
+const INVULN_TICKS = 12, MAX_PLAYERS = 12, DEFAULT_COLOR = '#00ff88';
+const VALID_DIRS = [[GRID,0],[-GRID,0],[0,GRID],[0,-GRID]];
+const ROOM_PREFIX = 'snakearena-';
+// Para jogadores atrás de NAT restritivo adicione um servidor TURN aqui:
+// { urls: 'turn:seu-servidor:3478', username: '...', credential: '...' }
+const PEER_OPTS = { config: { iceServers: [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' }
+] } };
 
-    let players = {};
-    let foods = [];
-    let connections = [];
+const canvas = $('gameCanvas');
+const ctx = canvas.getContext('2d');
+const dpr = Math.min(window.devicePixelRatio || 1, 3);
+canvas.width = canvas.height = CANVAS_SIZE * dpr;
+ctx.scale(dpr, dpr);
 
-    const TOTAL_FOODS = 8;
-    const INITIAL_LIVES = 3;
+let peer = null, conn = null, isHost = false, started = false;
+let nickname = '', selectedColor = DEFAULT_COLOR, currentRoomCode = '', personalRecord = 0;
+let players = {}, foods = [], particles = [], floatTexts = [], connections = [];
+let tickStart = performance.now(), lastFrame = performance.now();
 
-    function getRandomPos() {
-      return {
-        x: Math.floor(Math.random() * (CANVAS_SIZE / GRID)) * GRID,
-        y: Math.floor(Math.random() * (CANVAS_SIZE / GRID)) * GRID
-      };
-    }
+/* ---------- utilidades ---------- */
+function setStatus(t, c = '#bb86fc') { const e = $('status'); e.innerText = t; e.style.color = c; }
+function showToast(msg) {
+  const t = $('toast'); t.innerText = msg; t.classList.remove('hidden'); t.style.opacity = 1;
+  clearTimeout(showToast.t);
+  showToast.t = setTimeout(() => { t.style.opacity = 0; setTimeout(() => t.classList.add('hidden'), 300); }, 2000);
+}
+function addKillfeed(msg) {
+  const item = document.createElement('div');
+  item.className = 'killfeed-item'; item.innerText = msg;
+  $('killfeed').appendChild(item);
+  setTimeout(() => item.remove(), 4000);
+}
+async function copyRoomCode() {
+  if (!currentRoomCode) return;
+  try { await navigator.clipboard.writeText(currentRoomCode); showToast(Código ${currentRoomCode} copiado!); }
+  catch (e) { showToast(Código da sala: ${currentRoomCode}); }
+}
+const cleanNick = (s, fb) => ((typeof s === 'string' ? s : '').replace(/[\u0000-\u001f]/g, '').trim().slice(0, 10)) || fb;
+const cleanColor = c => (typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c)) ? c : DEFAULT_COLOR;
+const key = (x, y) => x + ',' + y;
+const genCode = () => { const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s = ''; for (let i = 0; i < 6; i++) s += a[Math.floor(Math.random() * a.length)]; return s; };
+const cleanCode = s => s.toUpperCase().replace(/[^A-Z0-9]/g, '');
+function sendTo(c, data) { try { if (c && c.open) c.send(data); } catch (e) {} }
+function broadcastEvent(data) { connections.forEach(c => sendTo(c, data)); }
+function showDisconnected(msg) {
+  started = false;
+  $('gameOverModal').classList.add('hidden');
+  $('disconnMsg').innerText = msg;
+  $('disconnModal').classList.remove('hidden');
+}
 
-    function getRandomFoodType() {
-      const rand = Math.random();
-      if (rand < 0.06) return { type: 'super', color: '#b026ff', points: 50 }; // 6% Roxo (+50 + 1 Vida)
-      if (rand < 0.18) return { type: 'rare', color: '#00d2ff', points: 30 };  // 12% Azul (+30)
-      if (rand < 0.33) return { type: 'speed', color: '#ffe600', points: 20 }; // 15% Dourado (+20 + Turbo)
-      if (rand < 0.50) return { type: 'normal', color: '#ff2a6d', points: 10 };// 17% Rosa (+10)
-      if (rand < 0.70) return { type: 'slow', color: '#39ff14', points: 5 };   // 20% Verde (+5 + Lento)
-      return { type: 'low', color: '#a0a0a0', points: 5 };                    // 30% Cinza (+5)
-    }
+/* ---------- efeitos ---------- */
+function spawnParticles(x, y, color) {
+  for (let i = 0; i < 8; i++) particles.push({ x: x + GRID / 2, y: y + GRID / 2, vx: (Math.random() - .5) * 5, vy: (Math.random() - .5) * 5, color, size: Math.random() * 3 + 2, life: 1 });
+}
+function addFloatingText(x, y, text, color) { floatTexts.push({ x: x + GRID / 2, y, text, color, life: 1 }); }
+function stepFx(dt) {
+  particles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= .04 * dt; });
+  particles = particles.filter(p => p.life > 0);
+  floatTexts.forEach(t => { t.y -= .8 * dt; t.life -= .025 * dt; });
+  floatTexts = floatTexts.filter(t => t.life > 0);
+}
 
-    function initFoods() {
-      foods = [];
-      for (let i = 0; i < TOTAL_FOODS; i++) {
-        const pos = getRandomPos();
-        const foodType = getRandomFoodType();
-        foods.push({ ...pos, ...foodType });
+/* ---------- posicionamento seguro (host) ---------- */
+function occupiedSet(extraFoods = true) {
+  const s = new Set();
+  Object.values(players).forEach(p => p.body.forEach(g => s.add(key(g.x, g.y))));
+  if (extraFoods) foods.forEach(f => s.add(key(f.x, f.y)));
+  return s;
+}
+function randCell(margin = 0) {
+  return { x: (margin + Math.floor(Math.random() * (CELLS - 2 * margin))) * GRID, y: (margin + Math.floor(Math.random() * (CELLS - 2 * margin))) * GRID };
+}
+function freeFoodPos() {
+  const occ = occupiedSet();
+  for (let i = 0; i < 300; i++) { const c = randCell(); if (!occ.has(key(c.x, c.y))) return c; }
+  return randCell();
+}
+// Procura uma linha livre de len células, longe das bordas, com espaço à frente.
+function placeSnake(len) {
+  const occ = occupiedSet();
+  for (; len >= 1; len = len > 1 ? Math.ceil(len / 2) : 0) {
+    for (let a = 0; a < 200; a++) {
+      const [dx, dy] = VALID_DIRS[Math.floor(Math.random() * 4)];
+      const head = randCell(3);
+      const body = [];
+      let ok = true;
+      for (let k = 0; k < len + 3 && ok; k++) {
+        const x = head.x - dx * k, y = head.y - dy * k;
+        if (x < 0 || y < 0 || x >= CANVAS_SIZE || y >= CANVAS_SIZE || occ.has(key(x, y))) ok = false;
+        else if (k < len) body.push({ x, y });
       }
-    }
-
-    function createRoom() {
-      nickname = document.getElementById('nickname').value.trim() || 'Host';
-      selectedColor = document.getElementById('snakeColor').value;
-      const customRoom = document.getElementById('customRoomId').value.trim();
-
-      if (!customRoom) return alert('Digite um nome ou senha para a Sala!');
-
-      const roomId = 'cobrinha-' + customRoom.toLowerCase().replace(/[^a-z0-9]/g, '');
-      peer = new Peer(roomId);
-
-      peer.on('open', id => {
-        isHost = true;
-        document.getElementById('status').innerText = `Sala Criada! Senha: ${customRoom}`;
-        initFoods();
-        startLocalGame(peer.id);
-      });
-
-      peer.on('error', err => {
-        if (err.type === 'unavailable-id') {
-          alert('Esta senha de sala já está em uso! Escolha outra.');
-        } else {
-          alert('Erro ao criar sala: ' + err.type);
-        }
-      });
-
-      peer.on('connection', c => {
-        connections.push(c);
-        c.on('data', data => handleHostMessages(c, data));
-      });
-    }
-
-    function joinRoom() {
-      nickname = document.getElementById('nickname').value.trim() || 'Jogador';
-      selectedColor = document.getElementById('snakeColor').value;
-      const customRoom = document.getElementById('customRoomId').value.trim();
-
-      if (!customRoom) return alert('Digite a senha da sala para entrar!');
-
-      const hostId = 'cobrinha-' + customRoom.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-      peer = new Peer();
-      peer.on('open', id => {
-        conn = peer.connect(hostId);
-        conn.on('open', () => {
-          document.getElementById('setup').classList.add('hidden');
-          document.getElementById('gameContainer').classList.remove('hidden');
-          conn.send({ type: 'JOIN', nickname: nickname, color: selectedColor });
-        });
-
-        conn.on('data', data => handleClientMessages(data));
-      });
-
-      peer.on('error', err => {
-        alert('Não foi possível encontrar essa sala. Verifique a senha!');
-      });
-    }
-
-    function startLocalGame(hostId) {
-      document.getElementById('setup').classList.add('hidden');
-      document.getElementById('gameContainer').classList.remove('hidden');
-      
-      addPlayer(hostId, nickname, selectedColor);
-      setInterval(gameLoop, 220);
-    }
-
-    function addPlayer(id, nick, color) {
-      const spawnPos = getRandomPos();
-      players[id] = {
-        id: id,
-        nickname: nick,
-        body: [spawnPos],
-        dirX: GRID,
-        dirY: 0,
-        score: 0,
-        lives: INITIAL_LIVES,
-        alive: true,
-        color: color || `#00ff88`,
-        speedBoost: false,
-        speedTicks: 0,
-        slowDebuff: false,
-        slowTicks: 0,
-        skipNextMove: false
-      };
-    }
-
-    function handleHostMessages(c, data) {
-      if (data.type === 'JOIN') addPlayer(c.peer, data.nickname, data.color);
-      if (data.type === 'MOVE' && players[c.peer]) {
-        const p = players[c.peer];
-        if (data.dirX !== -p.dirX && data.dirY !== -p.dirY) {
-          p.dirX = data.dirX;
-          p.dirY = data.dirY;
-        }
+      for (let k = 1; k <= 3 && ok; k++) {
+        const x = head.x + dx * k, y = head.y + dy * k;
+        if (x < 0 || y < 0 || x >= CANVAS_SIZE || y >= CANVAS_SIZE || occ.has(key(x, y))) ok = false;
       }
-      if (data.type === 'RESPAWN') addPlayer(c.peer, data.nickname, data.color);
+      if (ok) return { body, dx, dy };
     }
+  }
+  return { body: [randCell(3)], dx: GRID, dy: 0 };
+}
+function getRandomFoodType() {
+  const r = Math.random();
+  if (r < .06) return { type: 'super', color: '#b026ff', points: 50 };
+  if (r < .18) return { type: 'rare', color: '#00d2ff', points: 30 };
+  if (r < .33) return { type: 'speed', color: '#ffe600', points: 20 };
+  if (r < .50) return { type: 'normal', color: '#ff2a6d', points: 10 };
+  if (r < .70) return { type: 'slow', color: '#39ff14', points: 5 };
+  return { type: 'low', color: '#a0a0a0', points: 5 };
+}
+function initFoods() {
+  foods = [];
+  for (let i = 0; i < TOTAL_FOODS; i++) foods.push({ ...freeFoodPos(), ...getRandomFoodType() });
+}
 
-    function handleClientMessages(data) {
-      if (data.type === 'STATE') {
-        renderGame(data.players, data.foods);
-        updateLeaderboard(data.players);
-      }
-      if (data.type === 'DEAD') {
-        showGameOver(data.score);
-      }
-    }
+/* ---------- salas ---------- */
+function readProfile(fallback) {
+  nickname = cleanNick($('nickname').value, fallback);
+  selectedColor = cleanColor($('snakeColor').value);
+}
 
-    function resetPlayerPosition(p) {
-      const respawnPos = getRandomPos();
-      p.body = [respawnPos];
-      p.dirX = GRID;
-      p.dirY = 0;
-      p.speedBoost = false;
-      p.slowDebuff = false;
-    }
+function createRoom(tries = 0) {
+  readProfile('Host');
+  const typed = cleanCode($('customRoomId').value);
+  if ($('customRoomId').value.trim() && !typed) { setStatus('Use apenas letras e números no código.', '#ff4444'); return; }
+  currentRoomCode = typed || genCode();
+  setStatus('Criando sala...');
+  if (peer) peer.destroy();
+  peer = new Peer(ROOM_PREFIX + currentRoomCode.toLowerCase(), PEER_OPTS);
 
-    function movePlayer(p) {
-      if (!p.alive) return;
+  peer.on('open', id => {
+    isHost = true; started = true;
+    initFoods();
+    $('displayRoomCode').innerText = currentRoomCode;
+    startLocalGame(id);
+  });
+  peer.on('error', err => {
+    if (started) { showToast('Erro de rede: ' + err.type); return; }
+    if (err.type === 'unavailable-id') {
+      if (!typed && tries < 5) return createRoom(tries + 1);
+      setStatus('Este Código de Sala já está em uso! Tente outro.', '#ff4444');
+    } else setStatus('Erro ao criar sala. Tente novamente.', '#ff4444');
+  });
+  peer.on('disconnected', () => { try { peer.reconnect(); } catch (e) {} });
+  peer.on('connection', c => {
+    connections.push(c);
+    c.on('data', d => handleHostMessages(c, d));
+    c.on('close', () => removeDisconnectedPlayer(c.peer, c));
+    c.on('error', () => removeDisconnectedPlayer(c.peer, c));
+  });
+}
 
-      const head = { x: p.body[0].x + p.dirX, y: p.body[0].y + p.dirY };
+function joinRoom() {
+  readProfile('Jogador');
+  const code = cleanCode($('customRoomId').value);
+  if (!code) { setStatus('Digite o Código da Sala para entrar!', '#ff4444'); return; }
+  currentRoomCode = code;
+  setStatus('Conectando à sala...');
+  if (peer) peer.destroy();
+  peer = new Peer(PEER_OPTS);
+  let joined = false;
 
-      // Colisão com parede
-      if (head.x < 0 || head.x >= CANVAS_SIZE || head.y < 0 || head.y >= CANVAS_SIZE) {
-        handleHit(p);
-        return;
-      }
-
-      // Colisão com cobras
-      let hitSelfOrOther = false;
-      Object.values(players).forEach(other => {
-        if (!other.alive) return;
-        other.body.forEach(seg => {
-          if (head.x === seg.x && head.y === seg.y) hitSelfOrOther = true;
-        });
-      });
-
-      if (hitSelfOrOther) {
-        handleHit(p);
-        return;
-      }
-
-      p.body.unshift(head);
-
-      let ateIndex = foods.findIndex(f => f.x === head.x && f.y === head.y);
-      if (ateIndex !== -1) {
-        const foodEaten = foods[ateIndex];
-        p.score += foodEaten.points;
-
-        if (foodEaten.type === 'super') {
-          if (p.lives < 5) p.lives += 1; // Dá vida extra (máximo 5)
-        } else if (foodEaten.type === 'speed') {
-          p.speedBoost = true;
-          p.speedTicks = 25;
-          p.slowDebuff = false;
-        } else if (foodEaten.type === 'slow') {
-          p.slowDebuff = true;
-          p.slowTicks = 25;
-          p.speedBoost = false;
-        }
-
-        foods[ateIndex] = { ...getRandomPos(), ...getRandomFoodType() };
-      } else {
-        p.body.pop();
-      }
-    }
-
-    function handleHit(p) {
-      p.lives -= 1;
-      if (p.lives <= 0) {
-        killPlayer(p);
-      } else {
-        resetPlayerPosition(p);
-      }
-    }
-
-    function gameLoop() {
-      if (!isHost) return;
-
-      Object.values(players).forEach(p => {
-        if (!p.alive) return;
-
-        if (p.slowDebuff) {
-          p.slowTicks--;
-          if (p.slowTicks <= 0) p.slowDebuff = false;
-
-          p.skipNextMove = !p.skipNextMove;
-          if (p.skipNextMove) return; 
-        }
-
-        movePlayer(p);
-
-        if (p.alive && p.speedBoost) {
-          movePlayer(p);
-          p.speedTicks--;
-          if (p.speedTicks <= 0) p.speedBoost = false;
-        }
-      });
-
-      const state = { type: 'STATE', players, foods };
-      connections.forEach(c => c.send(state));
-      renderGame(players, foods);
-      updateLeaderboard(players);
-    }
-
-    function killPlayer(p) {
-      p.alive = false;
-
-      if (p.id === peer.id) {
-        showGameOver(p.score);
-      } else {
-        const c = connections.find(conn => conn.peer === p.id);
-        if (c) c.send({ type: 'DEAD', score: p.score });
-      }
-    }
-
-    function drawRoundedRect(x, y, width, height, radius, color, borderColor = null) {
-      ctx.beginPath();
-      ctx.roundRect(x, y, width, height, radius);
-      ctx.fillStyle = color;
-      ctx.fill();
-      if (borderColor) {
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-    }
-
-    function renderGame(playersObj, foodsList) {
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
-      // Desenhar Frutas
-      foodsList.forEach(food => {
-        const border = (food.type === 'super' || food.type === 'speed' || food.type === 'slow') ? '#ffffff' : null;
-        drawRoundedRect(food.x + 1, food.y + 1, GRID - 3, GRID - 3, 6, food.color, border);
-      });
-
-      // Desenhar Cobras
-      Object.values(playersObj).forEach(p => {
-        if (!p.alive) return;
-        p.body.forEach((seg, i) => {
-          if (i === 0) {
-            if (p.speedBoost) {
-              drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 6, '#ffe600');
-            } else if (p.slowDebuff) {
-              drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 6, '#39ff14');
-            } else {
-              drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 6, '#ffffff');
-              drawRoundedRect(seg.x + 4, seg.y + 4, GRID - 9, GRID - 9, 4, p.color);
-            }
-          } else {
-            drawRoundedRect(seg.x + 1, seg.y + 1, GRID - 3, GRID - 3, 5, p.color);
-          }
-        });
-      });
-    }
-
-    function updateLeaderboard(playersObj) {
-      const list = document.getElementById('leaderboard');
-      list.innerHTML = '';
-      
-      const sorted = Object.values(playersObj).sort((a, b) => b.score - a.score);
-
-      sorted.forEach(p => {
-        const li = document.createElement('li');
-        let statusIcons = '';
-        if (p.speedBoost) statusIcons += ' ⚡';
-        if (p.slowDebuff) statusIcons += ' 🐌';
-
-        const hearts = '❤️'.repeat(Math.max(0, p.lives));
-
-        li.style.color = p.color;
-        li.innerText = `${p.nickname}: ${p.score} pts [${hearts}]${statusIcons}`;
-        list.appendChild(li);
-      });
-    }
-
-    document.addEventListener('keydown', e => {
-      let dirX = 0, dirY = 0;
-      if (e.key === 'ArrowUp' || e.key === 'w') { dirX = 0; dirY = -GRID; }
-      if (e.key === 'ArrowDown' || e.key === 's') { dirX = 0; dirY = GRID; }
-      if (e.key === 'ArrowLeft' || e.key === 'a') { dirX = -GRID; dirY = 0; }
-      if (e.key === 'ArrowRight' || e.key === 'd') { dirX = GRID; dirY = 0; }
-
-      if (dirX !== 0 || dirY !== 0) {
-        if (isHost && players[peer.id]) {
-          const p = players[peer.id];
-          if (dirX !== -p.dirX && dirY !== -p.dirY) {
-            p.dirX = dirX; p.dirY = dirY;
-          }
-        } else if (conn) {
-          conn.send({ type: 'MOVE', dirX, dirY });
-        }
-      }
+  peer.on('open', () => {
+    conn = peer.connect(ROOM_PREFIX + code.toLowerCase(), { reliable: true });
+    const timer = setTimeout(() => {
+      if (!joined) { setStatus('Não foi possível conectar. Verifique o código!', '#ff4444'); peer.destroy(); }
+    }, 8000);
+    conn.on('open', () => {
+      joined = true; started = true; clearTimeout(timer);
+      $('displayRoomCode').innerText = currentRoomCode;
+      $('setup').classList.add('hidden');
+      $('gameContainer').classList.remove('hidden');
+      conn.send({ type: 'JOIN', nickname, color: selectedColor });
+      tickStart = performance.now();
+      requestAnimationFrame(renderLoop);
     });
+    conn.on('data', handleClientMessages);
+    conn.on('close', () => showDisconnected('O host encerrou a sala ou a conexão caiu.'));
+    conn.on('error', () => showDisconnected('Erro na conexão com o host.'));
+  });
+  peer.on('error', err => {
+    if (joined) showDisconnected('Erro de rede: ' + err.type);
+    else setStatus(err.type === 'peer-unavailable' ? 'Sala não encontrada. Verifique o código!' : 'Erro ao buscar sala. Tente novamente.', '#ff4444');
+  });
+}
 
-    function showGameOver(score) {
-      if (score > personalRecord) personalRecord = score;
-      document.getElementById('deathInfo').innerText = `Pontuação Final: ${score} | Seu Recorde: ${personalRecord}`;
-      
-      document.getElementById('deathButtons').classList.remove('hidden');
-      document.getElementById('newNickBox').classList.add('hidden');
-      document.getElementById('gameOverModal').classList.remove('hidden');
-    }
+function removeDisconnectedPlayer(peerId, c) {
+  connections = connections.filter(x => x !== c && x.peer !== peerId);
+  const p = players[peerId];
+  if (p) {
+    delete players[peerId];
+    const msg = 🔌 ${p.nickname} desconectou-se.;
+    addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
+  }
+}
 
-    function respawnSame() {
-      document.getElementById('gameOverModal').classList.add('hidden');
-      if (isHost) addPlayer(peer.id, nickname, selectedColor);
-      else conn.send({ type: 'RESPAWN', nickname: nickname, color: selectedColor });
-    }
+function startLocalGame(hostId) {
+  $('setup').classList.add('hidden');
+  $('gameContainer').classList.remove('hidden');
+  spawnPlayer(hostId, nickname, selectedColor);
+  addKillfeed(🎮 Sala pronta! Bem-vindo ${nickname}.);
+  tickStart = performance.now();
+  startTicker();
+  requestAnimationFrame(renderLoop);
+}
 
-    function showChangeNickInput() {
-      document.getElementById('deathButtons').classList.add('hidden');
-      document.getElementById('newNickBox').classList.remove('hidden');
-    }
+// Timer em Worker: não é pausado/reduzido quando a aba do host fica em segundo plano.
+function startTicker() {
+  try {
+    const url = URL.createObjectURL(new Blob([setInterval(()=>postMessage(0),${TICK_INTERVAL})], { type: 'text/javascript' }));
+    new Worker(url).onmessage = tick;
+  } catch (e) { setInterval(tick, TICK_INTERVAL); }
+}
 
-    function confirmNewNick() {
-      const input = document.getElementById('newNicknameInput').value.trim();
-      if (input) nickname = input;
-      selectedColor = document.getElementById('newSnakeColor').value;
-      
-      document.getElementById('gameOverModal').classList.add('hidden');
-      if (isHost) addPlayer(peer.id, nickname, selectedColor);
-      else conn.send({ type: 'RESPAWN', nickname: nickname, color: selectedColor });
+/* ---------- mensagens ---------- */
+function spawnPlayer(id, nick, color) {
+  if (players[id]) return;
+  if (Object.keys(players).length >= MAX_PLAYERS) { const c = connections.find(x => x.peer === id); sendTo(c, { type: 'FULL' }); return; }
+  const s = placeSnake(1);
+  players[id] = {
+    id, nickname: nick, body: s.body, prevBody: s.body.map(g => ({ ...g })),
+    dirX: s.dx, dirY: s.dy, nextDirX: s.dx, nextDirY: s.dy,
+    score: 0, lives: INITIAL_LIVES, alive: true, color,
+    speedBoost: false, speedTicks: 0, slowDebuff: false, slowTicks: 0, skipNextMove: false,
+    invuln: INVULN_TICKS
+  };
+  const msg = 🐍 ${nick} entrou no jogo!;
+  addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
+}
+
+function handleHostMessages(c, data) {
+  if (!data || typeof data !== 'object') return;
+  const id = c.peer;
+  if (data.type === 'JOIN' || data.type === 'RESPAWN') {
+    spawnPlayer(id, cleanNick(data.nickname, 'Jogador'), cleanColor(data.color)); // ignora se já está vivo
+  } else if (data.type === 'MOVE' && players[id]) {
+    if (!VALID_DIRS.some(([x, y]) => x === data.dirX && y === data.dirY)) return;
+    const p = players[id];
+    if (data.dirX !== -p.dirX || data.dirY !== -p.dirY) { p.nextDirX = data.dirX; p.nextDirY = data.dirY; }
+  }
+}
+
+function handleClientMessages(data) {
+  if (!data || typeof data !== 'object') return;
+  switch (data.type) {
+    case 'STATE': {
+      const old = players;
+      players = data.players; foods = data.foods;
+      Object.values(players).forEach(p => { p.prevBody = old[p.id] ? old[p.id].body : p.body; });
+      tickStart = performance.now();
+      updateLeaderboard(players);
+      break;
     }
-  </script>
+    case 'DEAD': showGameOver(data.score); break;
+    case 'PARTICLES': spawnParticles(data.x, data.y, data.color); break;
+    case 'FLOAT_TEXT': addFloatingText(data.x, data.y, data.text, data.color); break;
+    case 'EVENT_FEED': addKillfeed(String(data.text).slice(0, 120)); break;
+    case 'FULL': showDisconnected('A sala está cheia.'); break;
+  }
+}
+
+/* ---------- simulação (host) ---------- */
+function eat(p, head, idx) {
+  const f = foods[idx];
+  p.score += f.points;
+  spawnParticles(f.x, f.y, f.color);
+  broadcastEvent({ type: 'PARTICLES', x: f.x, y: f.y, color: f.color });
+  let txt = +${f.points};
+  if (f.type === 'super') {
+    if (p.lives < MAX_LIVES) p.lives++;
+    txt = '+50 ❤️ +1 VIDA!';
+    const m = 💎 ${p.nickname} pegou uma Fruta Roxa (+1 Vida)!;
+    addKillfeed(m); broadcastEvent({ type: 'EVENT_FEED', text: m });
+  } else if (f.type === 'speed') { p.speedBoost = true; p.speedTicks = 25; p.slowDebuff = false; txt = '⚡ TURBO!'; }
+  else if (f.type === 'slow') { p.slowDebuff = true; p.slowTicks = 25; p.speedBoost = false; txt = '🐌 LENTO!'; }
+  addFloatingText(head.x, head.y, txt, f.color);
+  broadcastEvent({ type: 'FLOAT_TEXT', x: head.x, y: head.y, text: txt, color: f.color });
+  foods.splice(idx, 1);
+  foods.push({ ...freeFoodPos(), ...getRandomFoodType() });
+}
+
+// Move todos os movers de forma simultânea: ninguém ganha vantagem pela ordem.
+function step(movers) {
+  if (!movers.length) return new Set();
+  const occ = new Map();
+  Object.values(players).forEach(q => q.body.forEach(g => occ.set(key(g.x, g.y), q)));
+  const plan = movers.map(p => {
+    p.dirX = p.nextDirX; p.dirY = p.nextDirY;
+    return { p, head: { x: p.body[0].x + p.dirX, y: p.body[0].y + p.dirY } };
+  });
+  const headCount = {};
+  plan.forEach(m => { const k = key(m.head.x, m.head.y); headCount[k] = (headCount[k] || 0) + 1; });
+
+  const hits = [], moving = [];
+  plan.forEach(m => {
+    const { p, head } = m, k = key(head.x, head.y);
+    const wall = head.x < 0 || head.x >= CANVAS_SIZE || head.y < 0 || head.y >= CANVAS_SIZE;
+    let reason = null;
+    if (wall) reason = 'colidiu com a parede!';
+    else if (occ.has(k)) { const o = occ.get(k); reason = o === p ? 'bateu em si mesmo!' : bateu em ${o.nickname}!; }
+    else if (headCount[k] > 1) reason = 'colidiu de frente!';
+
+    if (!reason) moving.push(m);
+    else if (p.invuln > 0) { if (!wall) moving.push(m); }   // invulnerável atravessa; parede apenas bloqueia
+    else hits.push([p, reason]);
+  });
+
+  const hitSet = new Set();
+  hits.forEach(([p, reason]) => { hitSet.add(p.id); handleHit(p, reason); });
+  moving.forEach(({ p, head }) => {
+    p.body.unshift(head);
+    const i = foods.findIndex(f => f.x === head.x && f.y === head.y);
+    if (i !== -1) eat(p, head, i); else p.body.pop();
+  });
+  return hitSet;
+}
+
+function handleHit(p, reason) {
+  p.lives--;
+  const msg = 💥 ${p.nickname} ${reason} [Vidas: ${Math.max(0, p.lives)}];
+  addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
+  if (p.lives <= 0) { killPlayer(p); return; }
+  const len = p.body.length;
+  p.body = [];                                   // libera o próprio corpo antes de procurar espaço
+  const s = placeSnake(len);
+  p.body = s.body; p.prevBody = s.body.map(g => ({ ...g }));
+  p.dirX = p.nextDirX = s.dx; p.dirY = p.nextDirY = s.dy;
+  p.speedBoost = false; p.slowDebuff = false; p.invuln = INVULN_TICKS;
+}
+
+function killPlayer(p) {
+  const msg = 💀 ${p.nickname} foi eliminado!;
+  addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
+  delete players[p.id];                          // morto sai do estado e do ranking
+  if (peer && p.id === peer.id) showGameOver(p.score);
+  else sendTo(connections.find(c => c.peer === p.id), { type: 'DEAD', score: p.score });
+}
+
+function tick() {
+  const all = Object.values(players);
+  all.forEach(p => { p.prevBody = p.body.map(g => ({ ...g })); });   // uma vez por tick (turbo não quebra a interpolação)
+  const movers = [];
+  all.forEach(p => {
+    if (p.invuln > 0) p.invuln--;
+    if (p.slowDebuff) {
+      if (--p.slowTicks <= 0) p.slowDebuff = false;
+      p.skipNextMove = !p.skipNextMove;
+      if (p.skipNextMove) return;
+    }
+    movers.push(p);
+  });
+  step(movers);
+  const second = movers.filter(p => players[p.id] && p.speedBoost);
+  step(second);
+  second.forEach(p => { if (players[p.id] && --p.speedTicks <= 0) p.speedBoost = false; });
+
+  const snap = {};
+  Object.values(players).forEach(p => { const { prevBody, ...rest } = p; snap[p.id] = rest; });  // sem prevBody na rede
+  const state = { type: 'STATE', players: snap, foods };
+  connections.forEach(c => sendTo(c, state));
+  tickStart = performance.now();
+  updateLeaderboard(players);
+}
+
+/* ---------- render ---------- */
+function renderLoop(now) {
+  const dt = Math.min(3, (now - lastFrame) / 16.667); lastFrame = now;
+  stepFx(dt);
+  renderGame(players, foods, Math.min(1, (now - tickStart) / TICK_INTERVAL), now);
+  requestAnimationFrame(renderLoop);
+}
+
+function drawRoundedRect(x, y, w, h, r, color, border = null) {
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+  ctx.fillStyle = color; ctx.fill();
+  if (border) { ctx.strokeStyle = border; ctx.lineWidth = 2; ctx.stroke(); }
+}
+
+function drawDottedGrid() {
+  ctx.strokeStyle = 'rgba(123,56,198,.25)'; ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+  ctx.beginPath();
+  for (let v = 0; v <= CANVAS_SIZE; v += GRID) { ctx.moveTo(v, 0); ctx.lineTo(v, CANVAS_SIZE); ctx.moveTo(0, v); ctx.lineTo(CANVAS_SIZE, v); }
+  ctx.stroke(); ctx.setLineDash([]);
+}
+
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16), f = v => Math.max(0, Math.min(255, v + amt));
+  return 'rgb(' + f(n >> 16) + ',' + f((n >> 8) & 255) + ',' + f(n & 255) + ')';
+}
+function ball(cx, cy, r, c, amt = 0) {
+  const g = ctx.createRadialGradient(cx - r * .35, cy - r * .35, r * .1, cx, cy, r);
+  g.addColorStop(0, shade(c, 80 + amt)); g.addColorStop(.55, shade(c, amt)); g.addColorStop(1, shade(c, -70 + amt));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+}
+function shine(cx, cy, r) {
+  ctx.fillStyle = 'rgba(255,255,255,.65)';
+  ctx.beginPath(); ctx.ellipse(cx - r * .35, cy - r * .4, r * .28, r * .18, -.6, 0, Math.PI * 2); ctx.fill();
+}
+function drawFruit(f, now) {
+  const cx = f.x + GRID / 2, cy = f.y + GRID / 2;
+  const k = 1 + .06 * Math.sin(now / 250 + f.x * .1 + f.y * .1);
+  ctx.save();
+  ctx.shadowBlur = 12; ctx.shadowColor = f.color;
+  if (f.type === 'normal') {                                   // maçã
+    ctx.translate(cx, cy + 1); ctx.scale(k, k);
+    ball(0, 0, 7, f.color);
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#7a4a21'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, -6); ctx.quadraticCurveTo(1, -9, 3, -10); ctx.stroke();
+    ctx.fillStyle = '#4cd964'; ctx.beginPath(); ctx.ellipse(4, -8, 3.4, 1.8, -.5, 0, Math.PI * 2); ctx.fill();
+    shine(0, 0, 7);
+  } else if (f.type === 'low') {                                // pedrinha
+    ctx.translate(cx, cy); ctx.scale(k, k);
+    ctx.beginPath(); ctx.ellipse(0, 1, 7, 6, .3, 0, Math.PI * 2); ctx.clip();
+    ball(0, 0, 8, f.color, -10); ctx.shadowBlur = 0; shine(0, 0, 7);
+  } else if (f.type === 'slow') {                               // espiral verde
+    ctx.translate(cx, cy); ctx.scale(k, k);
+    ball(0, 0, 7.5, f.color);
+    ctx.shadowBlur = 0; ctx.strokeStyle = 'rgba(0,60,0,.55)'; ctx.lineWidth = 1.4; ctx.beginPath();
+    for (let a = 0; a < 9; a += .3) { const r = .6 + a * .55; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+    ctx.stroke(); shine(0, 0, 7.5);
+  } else if (f.type === 'speed') {                              // raio dourado
+    ctx.translate(cx, cy); ctx.scale(k, k);
+    ball(0, 0, 7.5, f.color);
+    ctx.shadowBlur = 0; ctx.fillStyle = '#7a4b00';
+    ctx.beginPath(); ctx.moveTo(1.5, -6); ctx.lineTo(-3.5, 1); ctx.lineTo(-.3, 1); ctx.lineTo(-1.5, 6); ctx.lineTo(3.5, -1.5); ctx.lineTo(.3, -1.5); ctx.closePath(); ctx.fill();
+  } else if (f.type === 'rare') {                               // diamante
+    ctx.translate(cx, cy); ctx.scale(k, k);
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(8, -2); ctx.lineTo(0, 9); ctx.lineTo(-8, -2); ctx.closePath();
+    const g = ctx.createLinearGradient(-8, -9, 8, 9);
+    g.addColorStop(0, '#d9f7ff'); g.addColorStop(.5, f.color); g.addColorStop(1, '#0066aa');
+    ctx.fillStyle = g; ctx.fill(); ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-8, -2); ctx.lineTo(8, -2); ctx.moveTo(-3, -2); ctx.lineTo(0, -9); ctx.lineTo(3, -2); ctx.moveTo(-3, -2); ctx.lineTo(0, 9); ctx.lineTo(3, -2); ctx.stroke();
+  } else {                                                      // super: estrela roxa
+    ctx.translate(cx, cy); ctx.scale(k * 1.05, k * 1.05); ctx.rotate(now / 1500);
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) { const r = i % 2 ? 4 : 10, a = -Math.PI / 2 + i * Math.PI / 5; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+    ctx.closePath();
+    const g = ctx.createRadialGradient(-2, -2, 1, 0, 0, 10);
+    g.addColorStop(0, '#f2c9ff'); g.addColorStop(.5, f.color); g.addColorStop(1, '#5a0f8a');
+    ctx.fillStyle = g; ctx.fill(); ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawSnake(p, progress, now) {
+  const n = p.body.length, base = p.color;
+  const pts = p.body.map((seg, i) => {
+    let rx = seg.x, ry = seg.y;
+    const pv = p.prevBody && p.prevBody[i];
+    if (pv && Math.abs(seg.x - pv.x) <= GRID * 2.5 && Math.abs(seg.y - pv.y) <= GRID * 2.5) {
+      rx = pv.x + (seg.x - pv.x) * progress; ry = pv.y + (seg.y - pv.y) * progress;
+    }
+    return { x: rx + GRID / 2, y: ry + GRID / 2 };
+  });
+  const rad = i => i === 0 ? 9.5 : (n > 4 && i >= n - 3) ? 8 * (.6 + .13 * (n - 1 - i)) : 8;
+  ctx.lineCap = 'round';
+  for (let i = 1; i < n; i++) {                                 // liga os segmentos
+    if (Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y) > GRID * 2.5) continue;
+    ctx.strokeStyle = shade(base, -35); ctx.lineWidth = 2 * Math.min(rad(i), rad(i - 1)) * .95;
+    ctx.beginPath(); ctx.moveTo(pts[i - 1].x, pts[i - 1].y); ctx.lineTo(pts[i].x, pts[i].y); ctx.stroke();
+  }
+  for (let i = n - 1; i >= 1; i--) ball(pts[i].x, pts[i].y, rad(i), base, i % 2 ? 12 : -6);
+  const h = pts[0], dx = Math.sign(p.dirX || 1) * (p.dirY ? 0 : 1), dy = Math.sign(p.dirY || 0);
+  const nx = -dy, ny = dx;
+  ctx.save(); ctx.shadowBlur = 14; ctx.shadowColor = p.speedBoost ? '#ffe600' : p.slowDebuff ? '#39ff14' : base;
+  ball(h.x, h.y, 9.5, base, 15);
+  ctx.restore();
+  if (p.speedBoost || p.slowDebuff) {
+    ctx.strokeStyle = p.speedBoost ? '#ffe600' : '#39ff14'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(h.x, h.y, 11, 0, Math.PI * 2); ctx.stroke();
+  }
+  if (Math.sin(now / 220 + h.x) > .75) {                         // língua
+    ctx.strokeStyle = '#ff3b5c'; ctx.lineWidth = 1.5;
+    const tx = h.x + dx * 9, ty = h.y + dy * 9, ex = h.x + dx * 14, ey = h.y + dy * 14;
+    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(ex, ey);
+    ctx.moveTo(ex, ey); ctx.lineTo(ex + dx * 2 + nx * 2, ey + dy * 2 + ny * 2);
+    ctx.moveTo(ex, ey); ctx.lineTo(ex + dx * 2 - nx * 2, ey + dy * 2 - ny * 2); ctx.stroke();
+  }
+  [-1, 1].forEach(sd => {                                        // olhos
+    const ex = h.x + dx * 3.5 + nx * 4.5 * sd, ey = h.y + dy * 3.5 + ny * 4.5 * sd;
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(ex + dx * 1, ey + dy * 1, 1.6, 0, Math.PI * 2); ctx.fill();
+  });
+}
+
+function renderGame(playersObj, foodsList, progress, now) {
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  drawDottedGrid();
+
+  foodsList.forEach(f => drawFruit(f, now));
+
+  Object.values(playersObj).forEach(p => {
+    if (!p.alive) return;
+    ctx.globalAlpha = (p.invuln > 0 && Math.floor(now / 120) % 2 === 0) ? .4 : 1;
+    drawSnake(p, progress, now);
+    ctx.globalAlpha = 1;
+  });
+
+  particles.forEach(pt => {
+    ctx.fillStyle = pt.color; ctx.globalAlpha = Math.max(0, pt.life);
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.font = 'bold 12px Segoe UI, sans-serif'; ctx.textAlign = 'center';
+  floatTexts.forEach(ft => { ctx.fillStyle = ft.color; ctx.globalAlpha = Math.max(0, ft.life); ctx.fillText(ft.text, ft.x, ft.y); });
+  ctx.globalAlpha = 1;
+}
+
+function updateLeaderboard(playersObj) {
+  const list = $('leaderboard');
+  list.innerHTML = '';
+  Object.values(playersObj).sort((a, b) => b.score - a.score).forEach(p => {
+    const li = document.createElement('li');
+    let icons = '';
+    if (p.speedBoost) icons += ' ⚡';
+    if (p.slowDebuff) icons += ' 🐌';
+    li.style.color = p.color;
+    li.innerText = ${p.nickname}: ${p.score} pts [${'❤️'.repeat(Math.max(0, p.lives))}]${icons};
+    list.appendChild(li);
+  });
+}
+
+/* ---------- entrada (teclado, swipe, D-pad) ---------- */
+function setDirection(dx, dy) {
+  if (isHost) {
+    const p = peer && players[peer.id];
+    if (p && (dx !== -p.dirX || dy !== -p.dirY)) { p.nextDirX = dx; p.nextDirY = dy; }
+  } else if (conn && conn.open) conn.send({ type: 'MOVE', dirX: dx, dirY: dy });
+}
+const DIR_MAP = { U: [0, -GRID], D: [0, GRID], L: [-GRID, 0], R: [GRID, 0] };
+
+window.addEventListener('keydown', e => {
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  const map = { KeyW: 'U', ArrowUp: 'U', KeyS: 'D', ArrowDown: 'D', KeyA: 'L', ArrowLeft: 'L', KeyD: 'R', ArrowRight: 'R' };
+  const d = map[e.code];
+  if (!d) return;
+  e.preventDefault();
+  if (e.repeat) return;                // segurar a tecla não inunda a rede
+  setDirection(...DIR_MAP[d]);
+});
+
+let touch = null;
+canvas.addEventListener('touchstart', e => { const t = e.changedTouches[0]; touch = { x: t.clientX, y: t.clientY }; }, { passive: true });
+canvas.addEventListener('touchend', e => {
+  if (!touch) return;
+  const t = e.changedTouches[0], dx = t.clientX - touch.x, dy = t.clientY - touch.y;
+  touch = null;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+  setDirection(...DIR_MAP[Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'R' : 'L') : (dy > 0 ? 'D' : 'U')]);
+}, { passive: true });
+document.querySelectorAll('#dpad button').forEach(b =>
+  b.addEventListener('pointerdown', e => { e.preventDefault(); setDirection(...DIR_MAP[b.dataset.d]); }));
+
+/* ---------- game over / respawn ---------- */
+function showGameOver(score) {
+  if (score > personalRecord) personalRecord = score;
+  $('deathInfo').innerText = Pontuação Final: ${score} | Seu Recorde: ${personalRecord};
+  $('deathButtons').classList.remove('hidden');
+  $('newNickBox').classList.add('hidden');
+  $('gameOverModal').classList.remove('hidden');
+}
+function respawn() {
+  $('gameOverModal').classList.add('hidden');
+  if (isHost) spawnPlayer(peer.id, nickname, selectedColor);
+  else if (conn && conn.open) conn.send({ type: 'RESPAWN', nickname, color: selectedColor });
+}
+function respawnSame() { respawn(); }
+function showChangeNickInput() {
+  $('newNicknameInput').value = nickname;
+  $('newSnakeColor').value = selectedColor;
+  $('deathButtons').classList.add('hidden');
+  $('newNickBox').classList.remove('hidden');
+}
+function confirmNewNick() {
+  nickname = cleanNick($('newNicknameInput').value, nickname);
+  selectedColor = cleanColor($('newSnakeColor').value);
+  respawn();
+}
+</script>
 </body>
 </html>
