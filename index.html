@@ -263,12 +263,12 @@ function placeSnake(len) {
 }
 function getRandomFoodType() {
   const r = Math.random();
-  if (r < .06) return { type: 'super', color: '#b026ff', points: 50 };
-  if (r < .18) return { type: 'rare', color: '#00d2ff', points: 30 };
-  if (r < .33) return { type: 'speed', color: '#ffe600', points: 20 };
-  if (r < .50) return { type: 'normal', color: '#ff2a6d', points: 10 };
-  if (r < .70) return { type: 'slow', color: '#39ff14', points: 5 };
-  return { type: 'low', color: '#a0a0a0', points: 5 };
+  if (r < .04) return { type: 'super', color: '#b026ff', points: 50 };   //  4%
+  if (r < .12) return { type: 'rare', color: '#00d2ff', points: 30 };    //  8%
+  if (r < .22) return { type: 'speed', color: '#ffe600', points: 20 };   // 10%
+  if (r < .30) return { type: 'slow', color: '#39ff14', points: 5 };     //  8%
+  if (r < .40) return { type: 'low', color: '#a0a0a0', points: 5 };      // 10%
+  return { type: 'normal', color: '#ff2a6d', points: 10 };               // 60%
 }
 function initFoods() {
   foods = [];
@@ -331,6 +331,7 @@ function joinRoom() {
     }, 8000);
     conn.on('open', () => {
       joined = true; started = true; clearTimeout(timer);
+      if (document.activeElement) document.activeElement.blur();
       $('displayRoomCode').innerText = currentRoomCode;
       $('setup').classList.add('hidden');
       $('gameContainer').classList.remove('hidden');
@@ -361,6 +362,7 @@ function removeDisconnectedPlayer(peerId, c) {
 function startLocalGame(hostId) {
   $('setup').classList.add('hidden');
   $('gameContainer').classList.remove('hidden');
+  if (document.activeElement) document.activeElement.blur();
   spawnPlayer(hostId, nickname, selectedColor);
   addKillfeed(`🎮 Sala pronta! Bem-vindo ${nickname}.`);
   tickStart = performance.now();
@@ -386,10 +388,17 @@ function spawnPlayer(id, nick, color) {
     dirX: s.dx, dirY: s.dy, nextDirX: s.dx, nextDirY: s.dy,
     score: 0, lives: INITIAL_LIVES, alive: true, color,
     speedBoost: false, speedTicks: 0, slowDebuff: false, slowTicks: 0, skipNextMove: false,
-    invuln: INVULN_TICKS
+    invuln: INVULN_TICKS, queue: []
   };
   const msg = `🐍 ${nick} entrou no jogo!`;
   addKillfeed(msg); broadcastEvent({ type: 'EVENT_FEED', text: msg });
+}
+
+// Guarda até 3 viradas pendentes: duas teclas rápidas no mesmo tick não se perdem mais.
+function queueDir(p, dx, dy) {
+  const last = p.queue.length ? p.queue[p.queue.length - 1] : [p.dirX, p.dirY];
+  if ((dx === last[0] && dy === last[1]) || (dx === -last[0] && dy === -last[1])) return;
+  if (p.queue.length < 3) p.queue.push([dx, dy]);
 }
 
 function handleHostMessages(c, data) {
@@ -399,8 +408,7 @@ function handleHostMessages(c, data) {
     spawnPlayer(id, cleanNick(data.nickname, 'Jogador'), cleanColor(data.color)); // ignora se já está vivo
   } else if (data.type === 'MOVE' && players[id]) {
     if (!VALID_DIRS.some(([x, y]) => x === data.dirX && y === data.dirY)) return;
-    const p = players[id];
-    if (data.dirX !== -p.dirX || data.dirY !== -p.dirY) { p.nextDirX = data.dirX; p.nextDirY = data.dirY; }
+    queueDir(players[id], data.dirX, data.dirY);
   }
 }
 
@@ -449,6 +457,8 @@ function step(movers) {
   const occ = new Map();
   Object.values(players).forEach(q => q.body.forEach(g => occ.set(key(g.x, g.y), q)));
   const plan = movers.map(p => {
+    const q = p.queue.shift();
+    if (q) { p.nextDirX = q[0]; p.nextDirY = q[1]; }
     p.dirX = p.nextDirX; p.dirY = p.nextDirY;
     return { p, head: { x: p.body[0].x + p.dirX, y: p.body[0].y + p.dirY } };
   });
@@ -488,7 +498,7 @@ function handleHit(p, reason) {
   p.body = [];                                   // libera o próprio corpo antes de procurar espaço
   const s = placeSnake(len);
   p.body = s.body; p.prevBody = s.body.map(g => ({ ...g }));
-  p.dirX = p.nextDirX = s.dx; p.dirY = p.nextDirY = s.dy;
+  p.dirX = p.nextDirX = s.dx; p.dirY = p.nextDirY = s.dy; p.queue = [];
   p.speedBoost = false; p.slowDebuff = false; p.invuln = INVULN_TICKS;
 }
 
@@ -519,7 +529,7 @@ function tick() {
   second.forEach(p => { if (players[p.id] && --p.speedTicks <= 0) p.speedBoost = false; });
 
   const snap = {};
-  Object.values(players).forEach(p => { const { prevBody, ...rest } = p; snap[p.id] = rest; });  // sem prevBody na rede
+  Object.values(players).forEach(p => { const { prevBody, queue, ...rest } = p; snap[p.id] = rest; });  // sem prevBody na rede
   const state = { type: 'STATE', players: snap, foods };
   connections.forEach(c => sendTo(c, state));
   tickStart = performance.now();
@@ -689,13 +699,14 @@ function updateLeaderboard(playersObj) {
 function setDirection(dx, dy) {
   if (isHost) {
     const p = peer && players[peer.id];
-    if (p && (dx !== -p.dirX || dy !== -p.dirY)) { p.nextDirX = dx; p.nextDirY = dy; }
+    if (p) queueDir(p, dx, dy);
   } else if (conn && conn.open) conn.send({ type: 'MOVE', dirX: dx, dirY: dy });
 }
 const DIR_MAP = { U: [0, -GRID], D: [0, GRID], L: [-GRID, 0], R: [GRID, 0] };
 
 window.addEventListener('keydown', e => {
-  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  const ae = document.activeElement;
+  if (ae && ae.tagName === 'INPUT' && ae.type === 'text') return;   // só ignora quando está digitando
   const map = { KeyW: 'U', ArrowUp: 'U', KeyS: 'D', ArrowDown: 'D', KeyA: 'L', ArrowLeft: 'L', KeyD: 'R', ArrowRight: 'R' };
   const d = map[e.code];
   if (!d) return;
@@ -725,6 +736,7 @@ function showGameOver(score) {
   $('gameOverModal').classList.remove('hidden');
 }
 function respawn() {
+  if (document.activeElement) document.activeElement.blur();
   $('gameOverModal').classList.add('hidden');
   if (isHost) spawnPlayer(peer.id, nickname, selectedColor);
   else if (conn && conn.open) conn.send({ type: 'RESPAWN', nickname, color: selectedColor });
